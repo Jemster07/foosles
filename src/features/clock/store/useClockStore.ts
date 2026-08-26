@@ -6,13 +6,15 @@ export const useClockStore = defineStore('clock', () => {
 
     let timer: number | null = null;
 
-    const startClock = () => {
-        timer = window.setInterval(() => {
-            currentTime.value = new Date();
-        }, 1000);
+    const updateTime = () => {
+        currentTime.value = new Date();
     };
 
-    onMounted(() => startClock());
+    onMounted(() => {
+        updateTime();
+        timer = window.setInterval(updateTime, 1000);
+    });
+    
     onUnmounted(() => {
         if(timer){
             clearInterval(timer);
