@@ -1,22 +1,25 @@
 import { defineStore } from 'pinia';
-import { ref, onMounted, watch } from 'vue';
+import { ref } from 'vue';
 import { useLocalFileReader } from '@/composables/useLocalFileReader';
 
 export const usePetStore = defineStore('pet', () => {
-  const { lines, error, isLoading, loadFile } = useLocalFileReader();
+  const { lines, loadFile } = useLocalFileReader();
 
-  const activeSprite = ref<string>();
-  activeSprite.value = lines.value[0];
+  const spriteArray = ref<string[]>([]);
 
-  watch(lines, (newLines) => {
-    if (newLines.length > 0) {
-      activeSprite.value = newLines[0];
+  const parseSprites = async (filePath: string) => {
+    if (!filePath) return;
+
+    try {
+      await loadFile(filePath);
+
+      if (lines.value.length > 0) {
+        spriteArray.value = lines.value;
+      }
+    } catch (err) {
+      console.error("Failed to parse sprites:", err);
     }
-  });
+  };
 
-  onMounted(() => {
-    loadFile('/spriteSheet.txt');
-  });
-
-  return { activeSprite };
+  return { spriteArray, parseSprites };
 });
