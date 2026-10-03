@@ -7,27 +7,29 @@ import { ref, onMounted, watch } from 'vue';
 const petStore = usePetStore();
 const clockStore = useClockStore();
 
-const { spriteArray } = storeToRefs(petStore);
+const { spriteKeys, dictionary, currentSprite } = storeToRefs(petStore);
 const { parseSprites } = petStore;
 
 const spriteSheetPath = ref<string>('');
-let assetsLoaded: boolean = false;
-let cnt: number = 0;
-
-const currentSprite = ref<string | undefined>(undefined);
-currentSprite.value = "( '  ' )"; // Temporary default sprite, shows while sprite sheet parses
+const assetsLoaded = ref<boolean>(false);
+const cnt = ref<number>(0);
 
 onMounted(() => {
-  spriteSheetPath.value = '/spriteSheet_neutral.txt'; // Temporary value assignment, replace with result from petStats logic
+  spriteSheetPath.value = '/spriteSheet.json'; // Temporary value assignment, replace with result from petStats logic
 });
 
 watch(
   () => clockStore.currentTime,
   () => {
-    if (!assetsLoaded) return;
+    if (!assetsLoaded.value) return;
+    if (spriteKeys.value.length === 0) return;
 
-    currentSprite.value = spriteArray.value[cnt % spriteArray.value.length];
-    cnt++;
+    const nextKey = spriteKeys.value[cnt.value % spriteKeys.value.length];
+
+    if (nextKey) {
+      currentSprite.value = dictionary.value[nextKey] || '';
+      cnt.value++;
+    }
   }
 );
 
@@ -36,7 +38,7 @@ watch(
   async (newSheetPath) => {
     if (newSheetPath) {
       await parseSprites(newSheetPath);
-      assetsLoaded = true;
+      assetsLoaded.value = true;
     }
   }
 );

@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-export type SpriteDict = Record<number, string>;
+export type SpriteDict = Record<string, string>;
 
 export function useLocalJSONParser() {
   const dictionary = ref<SpriteDict>({});

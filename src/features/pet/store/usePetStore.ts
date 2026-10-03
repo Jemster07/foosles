@@ -1,25 +1,30 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { useLocalFileReader } from '@/composables/useLocalFileReader';
+import { useLocalJSONParser } from '@/composables/useLocalJSONParser';
 
 export const usePetStore = defineStore('pet', () => {
-  const { lines, loadFile } = useLocalFileReader();
+  const { dictionary, loadJSON } = useLocalJSONParser();
 
-  const spriteArray = ref<string[]>([]);
+  const spriteKeys = ref<string[]>([]);
+  const currentSprite = ref<string>('');
 
   const parseSprites = async (filePath: string) => {
     if (!filePath) return;
 
     try {
-      await loadFile(filePath);
+      const parsedData = await loadJSON(filePath);
 
-      if (lines.value.length > 0) {
-        spriteArray.value = lines.value;
+      if (parsedData) {
+        spriteKeys.value = Object.keys(parsedData)
+
+        if(spriteKeys.value[0]) {
+          currentSprite.value = parsedData[spriteKeys.value[0]] ?? '';
+        }
       }
     } catch (err) {
       console.error("Failed to parse sprites:", err);
     }
   };
 
-  return { spriteArray, parseSprites };
+  return { spriteKeys, currentSprite, dictionary, parseSprites };
 });
