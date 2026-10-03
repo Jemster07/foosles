@@ -1,29 +1,86 @@
-# foosles
+# 🦖 foosles
 
-Foosles Virtual Pet Game
+> A virtual pet game where players manage their Foosle's unpredictable needs through cause-and-effect care mechanics.
 
-## Recommended IDE Setup
+[![Framework: Vue 3](https://shields.io)](https://vuejs.org)
+[![Language: TypeScript](https://shields.io)](https://typescriptlang.org)
+[![Style: Tailwind CSS](https://shields.io)](https://tailwindcss.com)
+[![Build Tool: Vite](https://shields.io)](https://vite.dev)
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+---
 
-## Recommended Browser Setup
+## 🎮 Gameplay Mechanics
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+Foosles revolves around keeping your virtual pet healthy and happy by responding to its real-time demands.
 
-## Type Support for `.vue` Imports in TS
+### Phase 1: Core Survival
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- **Dynamic Care Requirements** – A backend number generator randomly triggers needs for **feeding**, **rolling**, or **petting**.
+- **Time-Driven Checks** – An internal clock object evaluates care triggers on every passing second.
+- **Health Depletion** – Providing the wrong care or ignoring your Foosle drops its health stat. Reaching 0 results in a definitive game over.
 
-## Customize configuration
+### Phase 2: Behavioral Trinity (Cause & Effect)
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Instead of guessing, your Foosle's animations indicate its current state. Care options interact through an interconnected loop:
 
-## Project Setup
+- **Petting** – Boosts happiness, but risks triggering hunger or physical shedding.
+- **Feeding** – Restores health, but carries a high probability of causing your pet to shed.
+- **Rolling** – Cleans up the play area. Rolling while shed is present restores health. Rolling at the wrong time lowers happiness.
+- **Shedding Penalty** – Accumulated shed lowers happiness over time. Petting a hungry or shedding Foosle rapidly drains its health.
+- **The Danger Zone** – Low happiness triggers rapid shedding. Your Foosle will physically shrink in size, making it significantly harder to save.
+
+---
+
+## 🛠️ Roadmap & TODO
+
+### Core Systems
+
+- [x] Build clock-driven animation
+- [ ] Build sprite parser
+- [ ] Build random number generator system
+- [ ] Build health stat and state rules
+
+### User Interface & Visuals
+
+- [x] Create clock animation
+- [ ] Drive sprite animations from random number generator system
+- [ ] Build UI interaction buttons
+- [ ] Design custom Windows 98 nostalgia theming with Tailwind CSS
+
+### Future Features & Polish
+
+- [ ] Implement local progress saving
+- [ ] Refine Foosle animations
+- [ ] Add retro audio sound effects
+- [ ] Develop customizable numbered clock faces
+
+---
+
+## ⚙️ Development Setup
+
+### Prerequisites
+
+- **Node.js** (v18+ recommended)
+- **npm**
+
+### Recommended IDE Setup
+
+- [VS Code](https://visualstudio.com) + [Vue (Official)](https://visualstudio.com) (Make sure to disable Vetur).
+
+### Recommended Browser DevTools
+
+- **Chromium-based (Chrome, Edge, Brave):** [Vue.js devtools](https://google.com) + [Turn on Custom Object Formatter](http://bit.ly).
+- **Firefox:** [Vue.js devtools](https://mozilla.org) + [Turn on Custom Object Formatter](https://fxdx.dev).
+
+### Type Support for `.vue` Imports
+
+TypeScript cannot handle type information for `.vue` imports by default. This project replaces the `tsc` CLI with `vue-tsc` for type checking. In your editor, use [Volar](https://visualstudio.com) to make the TypeScript language service aware of `.vue` types.
+
+---
+
+## 🚀 Scripts
+
+### Installation
 
 ```sh
 npm install
@@ -41,8 +98,10 @@ npm run dev
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### Lint with ESLint
 
 ```sh
 npm run lint
 ```
+
+For advanced build configurations, see the [Vite Configuration Reference](https://vite.devconfig/).
