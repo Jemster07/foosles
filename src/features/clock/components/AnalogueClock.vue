@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { computed } from 'vue';
 import { useClockStore } from '@/features/clock/store/useClockStore';
 
 const clockStore = useClockStore();
 
-const hourHand = ref<HTMLElement>();
-const minuteHand = ref<HTMLElement>();
-const secondHand = ref<HTMLElement>();
-
-const applyRotations = (date: Date) => {
-  if (!hourHand.value || !minuteHand.value || !secondHand.value)
-    return;
-
+const handStyles = computed(() => {
+  const date = clockStore.currentTime;
   const hours = date.getHours();
   const minutes = date.getMinutes();
   const seconds = date.getSeconds();
@@ -20,28 +14,19 @@ const applyRotations = (date: Date) => {
   const minuteDeg = minutes * 6 + seconds * 0.1;
   const secondDeg = seconds * 6;
 
-  hourHand.value.style.transform = `rotate(${hourDeg}deg)`;
-  minuteHand.value.style.transform = `rotate(${minuteDeg}deg)`;
-  secondHand.value.style.transform = `rotate(${secondDeg}deg)`;
-};
-
-watch(
-  () => clockStore.currentTime,
-  (newTime) => {
-    applyRotations(newTime);
-  }
-);
-
-onMounted(() => {
-  applyRotations(clockStore.currentTime);
+  return {
+    hour: { transform: `rotate(${hourDeg}deg)` },
+    minute: { transform: `rotate(${minuteDeg}deg)` },
+    second: { transform: `rotate(${secondDeg}deg)` }
+  };
 });
 </script>
 
 <template>
   <div class="clock-face">
-    <div :ref="(el) => hourHand = el as HTMLElement" class="hand hour-hand"></div>
-    <div :ref="(el) => minuteHand = el as HTMLElement" class="hand minute-hand"></div>
-    <div :ref="(el) => secondHand = el as HTMLElement" class="hand second-hand"></div>
+    <div :style="handStyles.hour" class="hand hour-hand"></div>
+    <div :style="handStyles.minute" class="hand minute-hand"></div>
+    <div :style="handStyles.second" class="hand second-hand"></div>
     <div class="center-cap"></div>
   </div>
 </template>
@@ -65,6 +50,7 @@ onMounted(() => {
   background: #111;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
+  transition: transform 0.15s cubic-bezier(0.4, 2.08, 0.55, 0.44);
 }
 
 .hour-hand {

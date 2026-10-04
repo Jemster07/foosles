@@ -2,7 +2,7 @@
 import { usePetStore } from '@/features/pet/store/usePetStore';
 import { useClockStore } from '@/features/clock/store/useClockStore';
 import { storeToRefs } from 'pinia';
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 const petStore = usePetStore();
 const clockStore = useClockStore();
@@ -10,42 +10,36 @@ const clockStore = useClockStore();
 const { spriteKeys, dictionary, currentSprite, currentAction } = storeToRefs(petStore);
 const { parseSprites } = petStore;
 
-const spriteSheetPath = ref<string>('');
 const assetsLoaded = ref<boolean>(false);
 const cnt = ref<number>(0);
 
-onMounted(() => {
-  spriteSheetPath.value = '/spriteSheet.json'; // Temporary value assignment, replace with result from petStats logic
-});
+const renderNextFrame = () => {
+  if (spriteKeys.value.length === 0) return;
+
+  const activeAnimation = dictionary.value[currentAction.value];
+  if (!activeAnimation) return;
+
+  const nextFrameKey = spriteKeys.value[cnt.value % spriteKeys.value.length];
+
+  if (nextFrameKey) {
+    currentSprite.value = activeAnimation[nextFrameKey] || '';
+    cnt.value++;
+  }
+}
+
+const initSprites = async () => {
+  await parseSprites('/spriteSheet.json'); // Will need to pass in the pet's current action/mood
+
+  assetsLoaded.value = true;
+  renderNextFrame();
+}
+initSprites();
 
 watch(
   () => clockStore.currentTime,
   () => {
     if (!assetsLoaded.value) return;
-    if (spriteKeys.value.length === 0) return;
-
-    const activeAnimation = dictionary.value[currentAction.value];
-    if (!activeAnimation) return;
-
-    const actionFrames = Object.keys(activeAnimation);
-    if (actionFrames.length === 0) return;
-
-    const nextFrameKey = spriteKeys.value[cnt.value % spriteKeys.value.length];
-
-    if (nextFrameKey) {
-      currentSprite.value = activeAnimation[nextFrameKey] || '';
-      cnt.value++;
-    }
-  }
-);
-
-watch(
-  spriteSheetPath,
-  async (newSheetPath) => {
-    if (newSheetPath) {
-      await parseSprites(newSheetPath);
-      assetsLoaded.value = true;
-    }
+    renderNextFrame();
   }
 );
 </script>
