@@ -7,7 +7,7 @@ import { ref, onMounted, watch } from 'vue';
 const petStore = usePetStore();
 const clockStore = useClockStore();
 
-const { spriteKeys, dictionary, currentSprite } = storeToRefs(petStore);
+const { spriteKeys, dictionary, currentSprite, currentAction } = storeToRefs(petStore);
 const { parseSprites } = petStore;
 
 const spriteSheetPath = ref<string>('');
@@ -24,10 +24,16 @@ watch(
     if (!assetsLoaded.value) return;
     if (spriteKeys.value.length === 0) return;
 
-    const nextKey = spriteKeys.value[cnt.value % spriteKeys.value.length];
+    const activeAnimation = dictionary.value[currentAction.value];
+    if (!activeAnimation) return;
 
-    if (nextKey) {
-      currentSprite.value = dictionary.value[nextKey] || '';
+    const actionFrames = Object.keys(activeAnimation);
+    if (actionFrames.length === 0) return;
+
+    const nextFrameKey = spriteKeys.value[cnt.value % spriteKeys.value.length];
+
+    if (nextFrameKey) {
+      currentSprite.value = activeAnimation[nextFrameKey] || '';
       cnt.value++;
     }
   }
