@@ -45,6 +45,7 @@ Instead of guessing, your Foosle's animations indicate its current state. Care o
 - [x] Create clock animation
 - [ ] Drive sprite animations from random number generator system
 - [ ] Build UI interaction buttons
+- [ ] Use `cnt` variable to determine duration of user's current session
 - [ ] Design custom Windows 98 nostalgia theming with Tailwind CSS
 
 ### Future Features & Polish

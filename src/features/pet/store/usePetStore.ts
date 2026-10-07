@@ -3,8 +3,9 @@ import { ref } from 'vue';
 import { useLocalJSONParser, type NestedSpriteDict } from '@/composables/useLocalJSONParser';
 
 export const usePetStore = defineStore('pet', () => {
-  const { dictionary, loadJSON } = useLocalJSONParser();
+  const { loadJSON } = useLocalJSONParser();
 
+  const spriteDict = ref<NestedSpriteDict>({});
   const spriteKeys = ref<string[]>([]);
   const currentSprite = ref<string>('');
   const currentAction = ref<string>('neutral');
@@ -16,7 +17,7 @@ export const usePetStore = defineStore('pet', () => {
       const parsedData = (await loadJSON(filePath)) as NestedSpriteDict;
 
       if (parsedData) {
-        dictionary.value = parsedData;
+        spriteDict.value = parsedData;
         currentAction.value = 'neutral'; // Will need to be passed into the ParseSprites function from the petSprites.vue as a parameter
 
         const spriteGroup = parsedData[currentAction.value];
@@ -35,5 +36,5 @@ export const usePetStore = defineStore('pet', () => {
     }
   };
 
-  return { spriteKeys, currentSprite, currentAction, dictionary, parseSprites };
+  return { spriteKeys, currentSprite, currentAction, spriteDict, parseSprites };
 });

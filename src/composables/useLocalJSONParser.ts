@@ -4,7 +4,6 @@ export type AnimationFrames = Record<string, string>;
 export type NestedSpriteDict = Record<string, AnimationFrames>;
 
 export function useLocalJSONParser() {
-  const dictionary = ref<NestedSpriteDict>({});
   const error = ref<string | null>(null);
   const isLoading = ref<boolean>(false);
 
@@ -20,7 +19,6 @@ export function useLocalJSONParser() {
       }
 
       const data: NestedSpriteDict = await response.json();
-      dictionary.value = data;
 
       return data;
     } catch (err) {
@@ -32,7 +30,6 @@ export function useLocalJSONParser() {
   }
 
   return {
-    dictionary,
     error,
     isLoading,
     loadJSON

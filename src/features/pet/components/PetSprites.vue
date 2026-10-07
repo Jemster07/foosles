@@ -7,7 +7,7 @@ import { ref, watch } from 'vue';
 const petStore = usePetStore();
 const clockStore = useClockStore();
 
-const { spriteKeys, dictionary, currentSprite, currentAction } = storeToRefs(petStore);
+const { spriteKeys, spriteDict, currentSprite, currentAction } = storeToRefs(petStore);
 const { parseSprites } = petStore;
 
 const assetsLoaded = ref<boolean>(false);
@@ -16,7 +16,7 @@ const cnt = ref<number>(0);
 const renderNextFrame = () => {
   if (spriteKeys.value.length === 0) return;
 
-  const activeAnimation = dictionary.value[currentAction.value];
+  const activeAnimation = spriteDict.value[currentAction.value];
   if (!activeAnimation) return;
 
   const nextFrameKey = spriteKeys.value[cnt.value % spriteKeys.value.length];
