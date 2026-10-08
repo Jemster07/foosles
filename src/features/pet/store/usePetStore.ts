@@ -10,7 +10,7 @@ export const usePetStore = defineStore('pet', () => {
   const currentSprite = ref<string>('');
   const currentAction = ref<string>('neutral');
 
-  const parseSprites = async (filePath: string) => {
+  const parseSprites = async (filePath: string, loadKey: string) => {
     if (!filePath) return;
 
     try {
@@ -18,7 +18,7 @@ export const usePetStore = defineStore('pet', () => {
 
       if (parsedData) {
         spriteDict.value = parsedData;
-        currentAction.value = 'neutral'; // Will need to be passed into the ParseSprites function from the petSprites.vue as a parameter
+        currentAction.value = loadKey;
 
         const spriteGroup = parsedData[currentAction.value];
 
@@ -36,5 +36,11 @@ export const usePetStore = defineStore('pet', () => {
     }
   };
 
-  return { spriteKeys, currentSprite, currentAction, spriteDict, parseSprites };
+  return {
+    spriteKeys,
+    currentSprite,
+    currentAction,
+    spriteDict,
+    parseSprites
+  };
 });

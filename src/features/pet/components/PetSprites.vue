@@ -7,6 +7,9 @@ import { ref, watch } from 'vue';
 const petStore = usePetStore();
 const clockStore = useClockStore();
 
+const filePath = '/spriteSheet.json';
+const loadKey = 'neutral'; // Will be determined by the PetStats component
+
 const { spriteKeys, spriteDict, currentSprite, currentAction } = storeToRefs(petStore);
 const { parseSprites } = petStore;
 
@@ -28,7 +31,7 @@ const renderNextFrame = () => {
 }
 
 const initSprites = async () => {
-  await parseSprites('/spriteSheet.json'); // Will need to pass in the pet's current action/mood
+  await parseSprites(filePath, loadKey);
 
   assetsLoaded.value = true;
   renderNextFrame();
@@ -48,7 +51,9 @@ watch(
   <div>
     <div>
       <h1>PetSprites</h1>
-      <pre class="sprite-display">{{ currentSprite }}</pre>
+      <div class="play-field">
+        <pre class="sprite-display">{{ currentSprite }}</pre>
+      </div>
     </div>
   </div>
 </template>
@@ -57,5 +62,13 @@ watch(
 .sprite-display {
   font-family: monospace;
   margin: 0;
+
+  background: rgb(200, 115, 234);
+}
+
+.play-field {
+  border: 1px solid black;
+  width: 450px;
+  padding: 10px;
 }
 </style>
