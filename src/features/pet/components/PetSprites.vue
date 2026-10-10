@@ -2,7 +2,7 @@
 import { usePetStore } from '@/features/pet/store/usePetStore';
 import { useClockStore } from '@/features/clock/store/useClockStore';
 import { storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
+import { watch } from 'vue';
 
 const petStore = usePetStore();
 const clockStore = useClockStore();
@@ -10,25 +10,8 @@ const clockStore = useClockStore();
 const filePath = '/spriteSheet.json';
 const loadKey = 'neutral'; // Will be determined by the PetStats component
 
-const { spriteKeys, spriteDict, currentSprite, currentAction } = storeToRefs(petStore);
-const { parseSprites } = petStore;
-
-const assetsLoaded = ref<boolean>(false);
-const cnt = ref<number>(0);
-
-const renderNextFrame = () => {
-  if (spriteKeys.value.length === 0) return;
-
-  const activeAnimation = spriteDict.value[currentAction.value];
-  if (!activeAnimation) return;
-
-  const nextFrameKey = spriteKeys.value[cnt.value % spriteKeys.value.length];
-
-  if (nextFrameKey) {
-    currentSprite.value = activeAnimation[nextFrameKey] || '';
-    cnt.value++;
-  }
-}
+const { currentSprite, spriteGroup_shed, spriteKeys_shed, assetsLoaded, cnt } = storeToRefs(petStore);
+const { parseSprites, renderNextFrame } = petStore;
 
 const initSprites = async () => {
   await parseSprites(filePath, loadKey);
@@ -53,6 +36,12 @@ watch(
       <h1>PetSprites</h1>
       <div class="play-field">
         <pre class="sprite-display">{{ currentSprite }}</pre>
+      </div>
+      <pre>{{ spriteGroup_shed }}</pre>
+      <pre>{{ spriteKeys_shed }}</pre>
+      <div>
+        <p>Assets Loaded: {{ assetsLoaded }}</p>
+        <p>Frame Count: {{ cnt }}</p>
       </div>
     </div>
   </div>

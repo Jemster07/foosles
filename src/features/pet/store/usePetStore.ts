@@ -1,14 +1,19 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { useLocalJSONParser, type NestedSpriteDict } from '@/composables/useLocalJSONParser';
+import { useLocalJSONParser, type AnimationFrames, type NestedSpriteDict } from '@/composables/useLocalJSONParser';
 
 export const usePetStore = defineStore('pet', () => {
   const { loadJSON } = useLocalJSONParser();
 
-  const spriteDict = ref<NestedSpriteDict>({});
-  const spriteKeys = ref<string[]>([]);
+  const assetsLoaded = ref<boolean>(false);
+  const cnt = ref<number>(0);
   const currentSprite = ref<string>('');
-  const currentAction = ref<string>('neutral');
+  const spriteGroup_shed = ref<AnimationFrames>();
+  const spriteKeys_shed = ref<string[]>([]);
+
+  let spriteDict: NestedSpriteDict = {};
+  let spriteKeys: string[] = [];
+  let currentAction: string = 'neutral';
 
   const parseSprites = async (filePath: string, loadKey: string) => {
     if (!filePath) return;
@@ -17,17 +22,22 @@ export const usePetStore = defineStore('pet', () => {
       const parsedData = (await loadJSON(filePath)) as NestedSpriteDict;
 
       if (parsedData) {
-        spriteDict.value = parsedData;
-        currentAction.value = loadKey;
+        spriteDict = parsedData;
+        currentAction = loadKey;
 
-        const spriteGroup = parsedData[currentAction.value];
+        const spriteGroup = parsedData[currentAction];
 
         if (spriteGroup) {
-          spriteKeys.value = Object.keys(spriteGroup);
+          spriteKeys = Object.keys(spriteGroup);
 
-          const firstFrameKey = spriteKeys.value[0];
+          const firstFrameKey = spriteKeys[0];
           if (firstFrameKey) {
             currentSprite.value = spriteGroup[firstFrameKey] || '';
+          }
+
+          if (spriteGroup_shed.value === undefined) {
+            spriteGroup_shed.value = parsedData['shed'] || {};
+            spriteKeys_shed.value = Object.keys(spriteGroup_shed.value || {});
           }
         }
       }
@@ -36,11 +46,27 @@ export const usePetStore = defineStore('pet', () => {
     }
   };
 
+  const renderNextFrame = () => {
+    if (spriteKeys.length === 0) return;
+
+    const activeAnimation = spriteDict[currentAction];
+    if (!activeAnimation) return;
+
+    const nextFrameKey = spriteKeys[cnt.value % spriteKeys.length];
+
+    if (nextFrameKey) {
+      currentSprite.value = activeAnimation[nextFrameKey] || '';
+      cnt.value++;
+    }
+  };
+
   return {
-    spriteKeys,
+    assetsLoaded,
+    cnt,
     currentSprite,
-    currentAction,
-    spriteDict,
-    parseSprites
+    spriteGroup_shed,
+    spriteKeys_shed,
+    parseSprites,
+    renderNextFrame
   };
 });
