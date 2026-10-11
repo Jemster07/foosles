@@ -8,12 +8,11 @@ export const usePetStore = defineStore('pet', () => {
   const assetsLoaded = ref<boolean>(false);
   const cnt = ref<number>(0);
   const currentSprite = ref<string>('');
-  const spriteGroup_shed = ref<AnimationFrames>();
-  const spriteKeys_shed = ref<string[]>([]);
+  const shedGroup = ref<AnimationFrames>();
+  const shedKeys = ref<string[]>();
 
   let spriteDict: NestedSpriteDict = {};
   let spriteKeys: string[] = [];
-  let currentAction: string = 'neutral';
 
   const parseSprites = async (filePath: string, loadKey: string) => {
     if (!filePath) return;
@@ -23,9 +22,7 @@ export const usePetStore = defineStore('pet', () => {
 
       if (parsedData) {
         spriteDict = parsedData;
-        currentAction = loadKey;
-
-        const spriteGroup = parsedData[currentAction];
+        const spriteGroup = parsedData[loadKey];
 
         if (spriteGroup) {
           spriteKeys = Object.keys(spriteGroup);
@@ -34,10 +31,13 @@ export const usePetStore = defineStore('pet', () => {
           if (firstFrameKey) {
             currentSprite.value = spriteGroup[firstFrameKey] || '';
           }
+        }
 
-          if (spriteGroup_shed.value === undefined) {
-            spriteGroup_shed.value = parsedData['shed'] || {};
-            spriteKeys_shed.value = Object.keys(spriteGroup_shed.value || {});
+        if (shedGroup.value === undefined) {
+          shedGroup.value = parsedData['shed'];
+
+          if (shedGroup.value) {
+            shedKeys.value = Object.keys(shedGroup.value);
           }
         }
       }
@@ -46,10 +46,10 @@ export const usePetStore = defineStore('pet', () => {
     }
   };
 
-  const renderNextFrame = () => {
+  const renderNextFrame = (loadKey: string) => {
     if (spriteKeys.length === 0) return;
 
-    const activeAnimation = spriteDict[currentAction];
+    const activeAnimation = spriteDict[loadKey];
     if (!activeAnimation) return;
 
     const nextFrameKey = spriteKeys[cnt.value % spriteKeys.length];
@@ -60,13 +60,29 @@ export const usePetStore = defineStore('pet', () => {
     }
   };
 
+  const getShedSprites = (shedLevel: number): string[] => {
+    if (!shedGroup.value || !shedKeys.value || shedKeys.value.length === 0) return [];
+
+    const shedSpriteArray: string[] = [];
+
+    for (let i = 0; i < shedLevel; i++) {
+      const frameIndex = (cnt.value + i) % shedKeys.value.length;
+      const targetKey = shedKeys.value[frameIndex] || '';
+
+      shedSpriteArray.push(shedGroup.value[targetKey] || '');
+    }
+
+    return shedSpriteArray;
+  };
+
   return {
     assetsLoaded,
     cnt,
     currentSprite,
-    spriteGroup_shed,
-    spriteKeys_shed,
+    shedGroup,
+    shedKeys,
     parseSprites,
-    renderNextFrame
+    renderNextFrame,
+    getShedSprites
   };
 });

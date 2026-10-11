@@ -2,22 +2,25 @@
 import { usePetStore } from '@/features/pet/store/usePetStore';
 import { useClockStore } from '@/features/clock/store/useClockStore';
 import { storeToRefs } from 'pinia';
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 
 const petStore = usePetStore();
 const clockStore = useClockStore();
 
 const filePath = '/spriteSheet.json';
 const loadKey = 'neutral'; // Will be determined by the PetStats component
+const shedLevel = 3; // Will be determined by the PetStats component
 
-const { currentSprite, spriteGroup_shed, spriteKeys_shed, assetsLoaded, cnt } = storeToRefs(petStore);
-const { parseSprites, renderNextFrame } = petStore;
+const { currentSprite, assetsLoaded, cnt } = storeToRefs(petStore);
+const { parseSprites, renderNextFrame, getShedSprites } = petStore;
+
+const shedSprites = computed(() => getShedSprites(shedLevel));
 
 const initSprites = async () => {
   await parseSprites(filePath, loadKey);
 
   assetsLoaded.value = true;
-  renderNextFrame();
+  renderNextFrame(loadKey);
 }
 initSprites();
 
@@ -25,7 +28,7 @@ watch(
   () => clockStore.currentTime,
   () => {
     if (!assetsLoaded.value) return;
-    renderNextFrame();
+    renderNextFrame(loadKey);
   }
 );
 </script>
@@ -35,10 +38,11 @@ watch(
     <div>
       <h1>PetSprites</h1>
       <div class="play-field">
-        <pre class="sprite-display">{{ currentSprite }}</pre>
+        <pre class="sprite-display" style="background: rgb(200, 115, 234)">{{ currentSprite }}</pre>
+        <div v-for="(currentShedSprite, index) in shedSprites" :key="index">
+          <pre class="sprite-display" style="background: rgb(115, 186, 234)">{{ currentShedSprite }}</pre>
+        </div>
       </div>
-      <pre>{{ spriteGroup_shed }}</pre>
-      <pre>{{ spriteKeys_shed }}</pre>
       <div>
         <p>Assets Loaded: {{ assetsLoaded }}</p>
         <p>Frame Count: {{ cnt }}</p>
@@ -51,8 +55,6 @@ watch(
 .sprite-display {
   font-family: monospace;
   margin: 0;
-
-  background: rgb(200, 115, 234);
 }
 
 .play-field {
