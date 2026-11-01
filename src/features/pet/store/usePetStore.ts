@@ -7,12 +7,13 @@ export const usePetStore = defineStore('pet', () => {
 
   const assetsLoaded = ref<boolean>(false);
   const cnt = ref<number>(0);
+
   const currentSprite = ref<string>('');
+  const spriteDict = ref<NestedSpriteDict>({});
+  const spriteKeys = ref<string[]>([]);
+
   const shedGroup = ref<AnimationFrames>();
   const shedKeys = ref<string[]>();
-
-  let spriteDict: NestedSpriteDict = {};
-  let spriteKeys: string[] = [];
 
   const parseSprites = async (filePath: string, loadKey: string) => {
     if (!filePath) return;
@@ -21,13 +22,13 @@ export const usePetStore = defineStore('pet', () => {
       const parsedData = (await loadJSON(filePath)) as NestedSpriteDict;
 
       if (parsedData) {
-        spriteDict = parsedData;
+        spriteDict.value = parsedData;
         const spriteGroup = parsedData[loadKey];
 
         if (spriteGroup) {
-          spriteKeys = Object.keys(spriteGroup);
+          spriteKeys.value = Object.keys(spriteGroup);
 
-          const firstFrameKey = spriteKeys[0];
+          const firstFrameKey = spriteKeys.value[0];
           if (firstFrameKey) {
             currentSprite.value = spriteGroup[firstFrameKey] || '';
           }
@@ -47,12 +48,12 @@ export const usePetStore = defineStore('pet', () => {
   };
 
   const renderNextFrame = (loadKey: string) => {
-    if (spriteKeys.length === 0) return;
+    if (spriteKeys.value.length === 0) return;
 
-    const activeAnimation = spriteDict[loadKey];
+    const activeAnimation = spriteDict.value[loadKey];
     if (!activeAnimation) return;
 
-    const nextFrameKey = spriteKeys[cnt.value % spriteKeys.length];
+    const nextFrameKey = spriteKeys.value[cnt.value % spriteKeys.value.length];
 
     if (nextFrameKey) {
       currentSprite.value = activeAnimation[nextFrameKey] || '';
@@ -79,8 +80,6 @@ export const usePetStore = defineStore('pet', () => {
     assetsLoaded,
     cnt,
     currentSprite,
-    shedGroup,
-    shedKeys,
     parseSprites,
     renderNextFrame,
     getShedSprites

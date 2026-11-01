@@ -37,12 +37,37 @@ watch(
   <div>
     <div>
       <h1>PetSprites</h1>
+
       <div class="play-field">
+        <div class="grid" style="background: rgb(115, 186, 234)">
+          <pre class="sprite-display">{{ currentSprite }}</pre>
+        </div>
+        <div class="grid" style="background: rgb(200, 115, 234)">
+          <pre class="sprite-display">{{ currentSprite }}</pre>
+        </div>
+        <div class="grid" style="background: rgb(115, 186, 234)">
+          <pre class="sprite-display">{{ currentSprite }}</pre>
+        </div>
+        <div class="grid" style="background: rgb(200, 115, 234)">
+          <pre class="sprite-display">{{ currentSprite }}</pre>
+        </div>
+        <div class="grid" style="background: rgb(115, 186, 234)">
+          <pre class="sprite-display">{{ currentSprite }}</pre>
+        </div>
+        <div class="grid" style="background: rgb(200, 115, 234)">
+          <pre class="sprite-display">{{ currentSprite }}</pre>
+        </div>
+        <div class="grid" style="background: rgb(115, 186, 234)">
+          <pre class="sprite-display">{{ currentSprite }}</pre>
+        </div>
+      </div>
+
+      <!-- <div class="play-field">
         <pre class="sprite-display" style="background: rgb(200, 115, 234)">{{ currentSprite }}</pre>
         <div v-for="(currentShedSprite, index) in shedSprites" :key="index">
           <pre class="sprite-display" style="background: rgb(115, 186, 234)">{{ currentShedSprite }}</pre>
         </div>
-      </div>
+      </div> -->
       <div>
         <p>Assets Loaded: {{ assetsLoaded }}</p>
         <p>Frame Count: {{ cnt }}</p>
@@ -58,8 +83,15 @@ watch(
 }
 
 .play-field {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 0px;
   border: 1px solid black;
-  width: 450px;
-  padding: 10px;
+  width: 525px;
+}
+
+.grid {
+  padding: 5px;
+  text-align: center;
 }
 </style>
