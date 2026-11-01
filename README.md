@@ -36,14 +36,15 @@ Instead of guessing, your Foosle's animations indicate its current state. Care o
 ### Core Systems
 
 - [x] Build clock-driven animation
-- [ ] Build sprite parser
+- [x] Build sprite parser
 - [ ] Build random number generator system
 - [ ] Build health stat and state rules
 
 ### User Interface & Visuals
 
 - [x] Create clock animation
-- [ ] Drive sprite animations from random number generator system
+- [ ] Build sprite positioning system
+- [x] Drive sprite animations from random number generator system
 - [ ] Build UI interaction buttons
 - [ ] Use `cnt` variable to determine duration of user's current session
 - [ ] Design custom Windows 98 nostalgia theming with Tailwind CSS

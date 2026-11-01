@@ -7,6 +7,7 @@ export const usePetStore = defineStore('pet', () => {
 
   const assetsLoaded = ref<boolean>(false);
   const cnt = ref<number>(0);
+  const currentPosition = ref<number>(0);
 
   const currentSprite = ref<string>('');
   const spriteDict = ref<NestedSpriteDict>({});
@@ -47,13 +48,13 @@ export const usePetStore = defineStore('pet', () => {
     }
   };
 
-  const renderNextFrame = (loadKey: string) => {
+  const renderNextFrame = (loadKey: string, directionKey: number) => {
     if (spriteKeys.value.length === 0) return;
 
     const activeAnimation = spriteDict.value[loadKey];
     if (!activeAnimation) return;
 
-    const nextFrameKey = spriteKeys.value[cnt.value % spriteKeys.value.length];
+    const nextFrameKey = spriteKeys.value[directionKey];
 
     if (nextFrameKey) {
       currentSprite.value = activeAnimation[nextFrameKey] || '';
@@ -76,12 +77,32 @@ export const usePetStore = defineStore('pet', () => {
     return shedSpriteArray;
   };
 
+  const updateSpritePosition = (loadKey:string, gridMin: number, gridMax: number) => {
+    if (assetsLoaded.value === false) return;
+
+    const randomNum = Math.floor(Math.random() * 10);
+    const isOdd = randomNum % 2 !== 0;
+
+    if (isOdd && currentPosition.value > gridMin) {
+      // console.log(`Subtract: ${currentPosition.value} to ${currentPosition.value - 1}`);
+      currentPosition.value--;
+      renderNextFrame(loadKey, 1);
+    } else if (!isOdd && currentPosition.value < gridMax) {
+      // console.log(`Add: ${currentPosition.value} to ${currentPosition.value + 1}`);
+      currentPosition.value++;
+      renderNextFrame(loadKey, 2);
+    } else {
+      // console.log(`No change: ${currentPosition.value}`);
+      renderNextFrame(loadKey, 0);
+    }
+  }
+
   return {
     assetsLoaded,
     cnt,
     currentSprite,
     parseSprites,
-    renderNextFrame,
-    getShedSprites
+    getShedSprites,
+    updateSpritePosition
   };
 });
