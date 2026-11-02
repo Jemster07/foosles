@@ -84,15 +84,12 @@ export const usePetStore = defineStore('pet', () => {
     const isOdd = randomNum % 2 !== 0;
 
     if (isOdd && currentPosition.value > gridMin) {
-      // console.log(`Subtract: ${currentPosition.value} to ${currentPosition.value - 1}`);
       currentPosition.value--;
-      renderNextFrame(loadKey, 1);
-    } else if (!isOdd && currentPosition.value < gridMax) {
-      // console.log(`Add: ${currentPosition.value} to ${currentPosition.value + 1}`);
-      currentPosition.value++;
       renderNextFrame(loadKey, 2);
+    } else if (!isOdd && currentPosition.value < gridMax) {
+      currentPosition.value++;
+      renderNextFrame(loadKey, 1);
     } else {
-      // console.log(`No change: ${currentPosition.value}`);
       renderNextFrame(loadKey, 0);
     }
   }
@@ -101,6 +98,7 @@ export const usePetStore = defineStore('pet', () => {
     assetsLoaded,
     cnt,
     currentSprite,
+    currentPosition,
     parseSprites,
     getShedSprites,
     updateSpritePosition

@@ -36,6 +36,8 @@ const handStyles = computed(() => {
 </script>
 
 <template>
+  <h1>AnalogueClock</h1>
+
   <div class="clock-face">
     <div v-for="t in 60" :key="`tick-${t}`" class="tick-spoke" :style="getTickStyle(t)">
       <div class="tick-mark" :class="{ 'major-tick': t % 5 === 0 }"></div>

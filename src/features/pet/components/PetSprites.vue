@@ -13,10 +13,18 @@ const gridMax = 3;
 const loadKey = 'neutral'; // Will be determined by the PetStats component
 const shedLevel = 3; // Will be determined by the PetStats component
 
-const { currentSprite, assetsLoaded, cnt } = storeToRefs(petStore);
+const { currentSprite, currentPosition, assetsLoaded, cnt } = storeToRefs(petStore);
 const { parseSprites, getShedSprites, updateSpritePosition } = petStore;
 
 const shedSprites = computed(() => getShedSprites(shedLevel));
+
+const gridRange = computed(() => {
+  const range: number[] = [];
+  for (let i = gridMin; i <= gridMax; i++) {
+    range.push(i);
+  }
+  return range;
+});
 
 const initSprites = async () => {
   await parseSprites(filePath, loadKey);
@@ -41,28 +49,11 @@ watch(
       <h1>PetSprites</h1>
 
       <div class="play-field">
-        <div id="grid_-3" class="grid" style="background: rgb(115, 186, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_-2" class="grid" style="background: rgb(200, 115, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_-1" class="grid" style="background: rgb(115, 186, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_0" class="grid" style="background: rgb(200, 115, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_1" class="grid" style="background: rgb(115, 186, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_2" class="grid" style="background: rgb(200, 115, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_3" class="grid" style="background: rgb(115, 186, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
+        <div v-for="pos in gridRange" :key="pos" class="grid">
+          <pre v-show="currentPosition === pos" class="sprite-display">{{ currentSprite }}</pre>
         </div>
       </div>
+
       <div>
         <p>Assets Loaded: {{ assetsLoaded }}</p>
         <p>Frame Count: {{ cnt }}</p>
@@ -80,7 +71,7 @@ watch(
 
 .play-field {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(7, 1fr);
   gap: 0px;
   border: 1px solid black;
   width: 525px;
