@@ -48,7 +48,7 @@ watch(
     <div>
       <h1>PetSprites</h1>
 
-      <div class="play-field">
+      <div class="play-field" :style="{ gridTemplateColumns: `repeat(${gridRange.length}, 70px)` }">
         <div v-for="pos in gridRange" :key="pos" class="grid">
           <pre v-show="currentPosition === pos" class="sprite-display">{{ currentSprite }}</pre>
         </div>
@@ -71,14 +71,14 @@ watch(
 
 .play-field {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
   gap: 0px;
   border: 1px solid black;
-  width: 525px;
+  width: max-content;
 }
 
 .grid {
-  padding: 5px;
+  padding: 5px 0px;
   text-align: center;
+  /* border: 1px solid black; */
 }
 </style>
