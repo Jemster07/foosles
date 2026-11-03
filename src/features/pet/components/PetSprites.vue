@@ -10,19 +10,36 @@ const clockStore = useClockStore();
 const filePath = '/spriteSheet.json';
 const gridMin = -3;
 const gridMax = 3;
+
 const loadKey = 'neutral'; // Will be determined by the PetStats component
 const shedLevel = 3; // Will be determined by the PetStats component
 
-const { currentSprite, assetsLoaded, cnt } = storeToRefs(petStore);
-const { parseSprites, getShedSprites, updateSpritePosition } = petStore;
+const { currentSprite, currentPosition, shedPositions, assetsLoaded, cnt } = storeToRefs(petStore);
+const { parseSprites, getShedSprites, updateSpritePosition, updateShedPositions } = petStore;
 
 const shedSprites = computed(() => getShedSprites(shedLevel));
+
+const shedItems = computed(() => {
+  return shedSprites.value.map((sprite, index) => ({
+    sprite,
+    position: shedPositions.value[index] ?? 0
+  }));
+});
+
+const gridRange = computed(() => {
+  const range: number[] = [];
+  for (let i = gridMin; i <= gridMax; i++) {
+    range.push(i);
+  }
+  return range;
+});
 
 const initSprites = async () => {
   await parseSprites(filePath, loadKey);
 
   assetsLoaded.value = true;
   updateSpritePosition(loadKey, gridMin, gridMax);
+  updateShedPositions(shedLevel, gridMin, gridMax);
 }
 initSprites();
 
@@ -31,6 +48,7 @@ watch(
   () => {
     if (!assetsLoaded.value) return;
     updateSpritePosition(loadKey, gridMin, gridMax);
+    updateShedPositions(shedLevel, gridMin, gridMax);
   }
 );
 </script>
@@ -40,54 +58,40 @@ watch(
     <div>
       <h1>PetSprites</h1>
 
-      <div class="play-field">
-        <div id="grid_-3" class="grid" style="background: rgb(115, 186, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_-2" class="grid" style="background: rgb(200, 115, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_-1" class="grid" style="background: rgb(115, 186, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_0" class="grid" style="background: rgb(200, 115, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_1" class="grid" style="background: rgb(115, 186, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_2" class="grid" style="background: rgb(200, 115, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
-        </div>
-        <div id="grid_3" class="grid" style="background: rgb(115, 186, 234)">
-          <pre class="sprite-display">{{ currentSprite }}</pre>
+      <div class="play-field" :style="{ gridTemplateColumns: `repeat(${gridRange.length}, 70px)` }">
+        <div v-for="pos in gridRange" :key="pos" class="grid">
+          <pre v-show="currentPosition === pos" class="sprite-display">{{ currentSprite }}</pre>
+
+          <template v-for="(shed, index) in shedItems" :key="index">
+            <pre v-show="shed.position === pos" class="sprite-display">{{ shed.sprite }}</pre>
+          </template>
         </div>
       </div>
+
       <div>
         <p>Assets Loaded: {{ assetsLoaded }}</p>
         <p>Frame Count: {{ cnt }}</p>
-        <p>Shed Sprites: {{ shedSprites }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.sprite-display {
-  font-family: monospace;
-  margin: 0;
-}
-
 .play-field {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   gap: 0px;
   border: 1px solid black;
-  width: 525px;
+  width: max-content;
 }
 
 .grid {
-  padding: 5px;
+  padding: 5px 0px;
   text-align: center;
+  /* border: 1px solid black; */
+}
+
+.sprite-display {
+  font-family: monospace;
+  margin: 0;
 }
 </style>
