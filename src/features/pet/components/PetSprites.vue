@@ -54,25 +54,21 @@ watch(
 </script>
 
 <template>
-  <div>
-    <div>
-      <h1>PetSprites</h1>
+  <h1>PetSprites</h1>
 
-      <div class="play-field" :style="{ gridTemplateColumns: `repeat(${gridRange.length}, 70px)` }">
-        <div v-for="pos in gridRange" :key="pos" class="grid">
-          <pre v-show="currentPosition === pos" class="sprite-display">{{ currentSprite }}</pre>
+  <div class="play-field" :style="{ gridTemplateColumns: `repeat(${gridRange.length}, 70px)` }">
+    <div v-for="pos in gridRange" :key="pos" class="grid">
+      <pre v-show="currentPosition === pos" class="sprite-display">{{ currentSprite }}</pre>
 
-          <template v-for="(shed, index) in shedItems" :key="index">
-            <pre v-show="shed.position === pos" class="sprite-display">{{ shed.sprite }}</pre>
-          </template>
-        </div>
-      </div>
-
-      <div>
-        <p>Assets Loaded: {{ assetsLoaded }}</p>
-        <p>Frame Count: {{ cnt }}</p>
-      </div>
+      <template v-for="(shed, index) in shedItems" :key="index">
+        <pre v-show="shed.position === pos" class="sprite-display">{{ shed.sprite }}</pre>
+      </template>
     </div>
+  </div>
+
+  <div>
+    <p>Assets Loaded: {{ assetsLoaded }}</p>
+    <p>Frame Count: {{ cnt }}</p>
   </div>
 </template>
 

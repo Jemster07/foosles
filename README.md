@@ -43,7 +43,7 @@ Instead of guessing, your Foosle's animations indicate its current state. Care o
 ### User Interface & Visuals
 
 - [x] Create clock animation
-- [ ] Build sprite positioning system
+- [x] Build sprite positioning system
 - [x] Drive sprite animations from random number generator system
 - [ ] Build UI interaction buttons
 - [ ] Use `cnt` variable to determine duration of user's current session
